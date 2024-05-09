@@ -5,7 +5,13 @@ async function  getUsers (){
  return users
 }
 
+async function getOneUser(email){
+    const user = await Model.findOne({email});
+    return user
+}
+
 
 module.exports ={
-    getUsers
+    getUsers,
+    getOneUser
 }

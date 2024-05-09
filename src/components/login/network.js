@@ -9,9 +9,19 @@ const response = require('../../../network/response')
 router.get('/login', function (req, res) {
     controller.getUsers()
         .then((users) =>
-            response.succes(req, res, users, 200))
+            response.success(req, res, users, 200))
         .catch(e => {
             response.error(req, res, 'No se pudo obtener toda la informacion', 400, 'Error en Callback Informacion')
+        })
+
+})
+router.post('/loginUser', function (req, res) {
+    console.log(req.body)
+    controller.loginUser(req, res)
+        .then((result) => {
+            return response.success(req, res, result, 200);
+        }).catch((e) => {
+            return response.error(req, res, 'Error al procesar la solicitud', 500, e.message)
         })
 
 })
