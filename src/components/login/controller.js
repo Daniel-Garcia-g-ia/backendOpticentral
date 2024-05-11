@@ -1,16 +1,34 @@
 const store = require('./storage');
 const ENV = require('../../../config');
+const jwt = require('../../jwt')
 
-function getUsers() {
+function getUsers(req, res) {
+    const token = req.headers['x-access-token'];
+    
+
     return new Promise((resolve, reject) => {
-        store.getUsers()
-            .then((users) => {
-                resolve(users)
-
-            }).catch(e => {
-                reject(e)
-            })
-    })
+        
+        if (!token) {
+            reject({status:401 , message:'Sin token de acceso'});
+           
+        } else {
+            jwt.verifyToken(token)
+                .then((decoded) => {
+                    store.getUsers()
+                        .then((users) => {
+                            resolve(users);
+                        })
+                        .catch((e) => {
+                            reject(e);
+                        });
+                })
+                .catch((err) => {
+                    console.log('token')
+                    
+                    reject({status: 401, message: 'Token Incorrecto'});
+                });
+        }
+    });
 }
 
 function loginUser(req, res) {
@@ -25,7 +43,14 @@ function loginUser(req, res) {
                 if (user.password !== password) {
                     reject({ status: 401, message: 'Contraseña incorrecta' })
                 } else {
-                    resolve(user)
+                    const token = jwt.generateToken(user._id)
+                    const userData = {
+                        auht: true,
+                        name: user.name,
+                        role: user.role,
+                        token: token
+                    }
+                    resolve(userData)
                 }
             }
         }).catch((e) => {
