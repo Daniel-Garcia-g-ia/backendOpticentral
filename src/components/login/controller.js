@@ -45,7 +45,7 @@ function loginUser(req, res) {
                 } else {
                     const token = jwt.generateToken(user._id)
                     const userData = {
-                        auht: true,
+                        auth: true,
                         name: user.name,
                         role: user.role,
                         token: token
