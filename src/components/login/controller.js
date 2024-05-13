@@ -28,8 +28,7 @@ function getUsers(req, res) {
                 .catch((e) => {
                     const data = {
                         auth:false
-                    }
-                    
+                    }                    
                     reject({status: 401, message: 'Token Incorrecto', authDenied });
                 });
         }
