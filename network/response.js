@@ -5,12 +5,14 @@ exports.success = function (req, res, users, status) {
     })
 }
 
-exports.error = function (req, res, error, status, details) {
+exports.error = function (req, res, error, status, details, data) {
     console.error(`Desde el servidor se obtiene el siguiente error: ${details}`);
+    console.log(data)
     res.status(status).send({
-        status: status,
+        status: status,        
         error: error,
-        detail: details
+        detail: details,
+        body: data        
     })
 
 }

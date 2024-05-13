@@ -12,14 +12,11 @@ router.get('/login', function (req, res) {
             response.success(req, res, users, 200)
         })
         .catch(e => {             
-            response.error(req, res, 'No se pudo obtener toda la informacion', e.status, e.message)
+            response.error(req, res, 'No se pudo obtener toda la informacion', e.status, e.message, e.authDenied)
         })
 
 })
 router.post('/loginUser', function (req, res) {
-
-
-
 
     if (!req.body || Object.keys(req.body).length === 0) {
         return response.error(req, res, "Error, el cuerpo de la solcitud está vacío", 500)
@@ -29,7 +26,7 @@ router.post('/loginUser', function (req, res) {
             .then((result) => {
                 return response.success(req, res, result, 200);
             }).catch((e) => {
-                return response.error(req, res, 'Error al procesar la solicitud', e.status, e.message)
+                return response.error(req, res, 'Error al procesar la solicitud', e.status, e.message, e.authDenied)
             })
     }
 

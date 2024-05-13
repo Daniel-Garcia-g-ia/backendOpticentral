@@ -3,13 +3,16 @@ const ENV = require('../../../config');
 const jwt = require('../../jwt')
 
 function getUsers(req, res) {
-    const token = req.headers['x-access-token'];
-    
+    const token = req.headers['x-access-token'];   
 
     return new Promise((resolve, reject) => {
+        const authDenied = {
+            auth:false,
+            token:"none"
+        }
         
         if (!token) {
-            reject({status:401 , message:'Sin token de acceso'});
+            reject({status:401 , message:'Sin token de acceso'}, authDenied);
            
         } else {
             jwt.verifyToken(token)
@@ -22,10 +25,12 @@ function getUsers(req, res) {
                             reject(e);
                         });
                 })
-                .catch((err) => {
-                    console.log('token')
+                .catch((e) => {
+                    const data = {
+                        auth:false
+                    }
                     
-                    reject({status: 401, message: 'Token Incorrecto'});
+                    reject({status: 401, message: 'Token Incorrecto', authDenied });
                 });
         }
     });
@@ -33,15 +38,19 @@ function getUsers(req, res) {
 
 function loginUser(req, res) {
     return new Promise((resolve, reject) => {
+        const authDenied = {
+            auth:false,
+            token:"none"
+        }
         const { email, password } = req.body;
         store.getOneUser(email).then((user) => {
             if (!user) {
                 // No encuentra el usuario, rechaza la promesa
-                reject({ status: 401, message: 'Usuario no encontrado' });
+                reject({ status: 401, message: 'Usuario no encontrado', authDenied });
             } else {
                 // Si encuentra el usuario, verifica la contraseña
-                if (user.password !== password) {
-                    reject({ status: 401, message: 'Contraseña incorrecta' })
+                if (user.password !== password) {                                 
+                    reject({ status: 401, message: 'Contraseña incorrecta', authDenied  })
                 } else {
                     const token = jwt.generateToken(user._id)
                     const userData = {
@@ -53,8 +62,8 @@ function loginUser(req, res) {
                     resolve(userData)
                 }
             }
-        }).catch((e) => {
-            reject({ status: 500, message: 'Error al obtener el usuario', error: e.message })
+        }).catch((e) => {           
+            reject({ status: 500, message: 'Error al obtener el usuario', error: e.message, authDenied })
         })
     })
 }
