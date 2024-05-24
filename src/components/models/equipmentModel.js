@@ -11,6 +11,14 @@ const equipmentSchema = new Schema({
     name: {
         type: String,
         required: true
+    },
+    place: {
+        type: String,
+        required: true
+    },
+    image: {
+        type: String,
+        required: true
     }
    
 

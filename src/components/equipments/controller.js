@@ -16,7 +16,7 @@ function getEquipments(req, res) {
                     .then((result) => {
                         const data = {
                             auth: true,
-                            equipmets: result
+                            equipments: result
 
                         }
                         resolve(data)
