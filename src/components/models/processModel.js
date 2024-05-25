@@ -4,8 +4,12 @@ const Schema = mongoose.Schema;
 
 const processDataShema = new Schema({
     date: {
-        type: Date,
+        type: String,
         required: false,
+    },
+    turn:{
+        type:String,
+        required: true
     },
     release: {
         type: Boolean,
