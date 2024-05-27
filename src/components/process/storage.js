@@ -14,7 +14,7 @@ async function getOne(equipmentId, date, turn) {
             "processData.date": date,
             "processData.turn": turn
         })
-        
+
         return process
 
     } catch (error) {
@@ -25,8 +25,22 @@ async function getOne(equipmentId, date, turn) {
 
 }
 
+function setProduction(dataProduction) {
+    return new Promise((resolve, reject) => {
+        const newProduction = new model(dataProduction);
+        
+        newProduction.save()
+            .then(result => {
+                resolve(result);
+            })
+            .catch(error => {
+                reject(new Error('Error al guardar el reporte: ' + error.message));
+            });
+    });
+}
 
 module.exports = {
     get,
-    getOne
+    getOne,
+    setProduction
 }

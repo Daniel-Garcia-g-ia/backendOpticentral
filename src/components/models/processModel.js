@@ -2,7 +2,32 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const processDataShema = new Schema({
+const productionSchema = new Schema({
+    brand: {
+        type: String,
+        required: false
+    },
+    brewId:{
+        type: Number,
+        reqired: false,
+    },
+    volume:{
+        type: Number,
+        required: false
+    },
+    startTime: {
+        type: String,
+        required: false
+
+    },
+    endTime: {
+        type: String,
+        required: false
+    }
+
+})
+
+const processDataSchema = new Schema({
     date: {
         type: String,
         required: false,
@@ -14,7 +39,14 @@ const processDataShema = new Schema({
     release: {
         type: Boolean,
         required: true
+    },
+    production: {
+        type: [productionSchema],
+        required: false
+
     }
+        
+
 })
 
 const processSchema = new Schema({
@@ -32,8 +64,8 @@ const processSchema = new Schema({
         required: true,
     },
     processData: {
-        type: [processDataShema],
-        required: true
+        type: [processDataSchema],
+        required: false
 
     }
 

@@ -81,9 +81,50 @@ function getOneReport (req, res){
 
 }
 
+
+function addProduction (req, res){
+    const token = req.headers['x-access-token']
+    const authDenied = {
+        auth: false,
+        success: false
+    }
+
+    return new Promise((resolve,reject)=>{
+        
+        jwt.verifyToken(token)
+            .then((decoded)=>{
+                const dataProduction = req.body  
+                      
+                /* console.log('Producción guardada:', JSON.stringify(dataProduction, null, 2));     */ 
+
+                storage.setProduction(dataProduction)
+                    .then(()=>{
+                        const data = {
+                            auth: true,
+                            success: true                          
+
+                        } 
+                        resolve(data)
+
+                    }).catch((err) => {
+
+                        reject({ status: 402, message: 'error procesar informacion', authDenied })
+
+                    })
+                
+
+            }).catch((err)=>{
+                reject({ status: 401, message: 'Error al autenticar token', authDenied})
+            })
+    })
+
+
+}
+
 module.exports = {
     getReport,
-    getOneReport
+    getOneReport,
+    addProduction
 }
 
 
