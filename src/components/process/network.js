@@ -38,6 +38,18 @@ router.post('/processData/addProduction', function (req, res) {
         })
 })
 
+router.get('/mostRecentReport/:equipmentId', function (req, res) {
+
+
+    controller.getMostRecentReport(req, res)
+        .then((result) => {
+            response.success(req, res, result, 200)
+        }).catch((err) => {
+            response.error(req, res, 'Error al procesar solictud', err.status, err.message, err.authDenied)
+        })
+
+})
+
 
 
 module.exports = router;

@@ -39,8 +39,23 @@ function setProduction(dataProduction) {
     });
 }
 
+const getMostRecentReport = (equipmentId) => {
+    return new Promise((resolve, reject) => {
+        model.find({ "equipmentId": equipmentId })
+            .sort({ 'processData.production.brewId': -1 }) // Sort by brewId in descending order
+            .limit(1) // Get the most recent one
+            .then(process => {
+                resolve(process[0])
+            })
+            .catch(error => {
+                reject(new Error('Error al obtener el reporte'));
+            });
+    });
+};
+
 module.exports = {
     get,
     getOne,
-    setProduction
+    setProduction,
+    getMostRecentReport
 }

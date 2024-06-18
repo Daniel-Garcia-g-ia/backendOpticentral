@@ -15,6 +15,10 @@ const productionSchema = new Schema({
         type: Number,
         required: false
     },
+    release:{
+        type: Boolean,
+        required: false
+    },
     startTime: {
         type: String,
         required: false
