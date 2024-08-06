@@ -156,7 +156,7 @@ function getMostRecentReport(req, res) {
                         }
 
 
-                        
+
 
                     })
 
@@ -168,12 +168,49 @@ function getMostRecentReport(req, res) {
     })
 
 }
+function updateReportProduction(req, res) {
+    const token = req.headers['x-access-token']
+    const { id } = req.params;
+    const { processDataId, productionId, reportId ,startTime, endTime, totalTime,volume} = req.body
+    const authDenied = {
+        auth: false,
+    }
+
+
+    return new Promise((resolve, reject) => {
+        jwt.verifyToken(token)
+            .then((decoded) => {
+                
+
+                storage.updateProductionReport(id , {startTime, endTime, totalTime, volume}, processDataId, productionId, reportId)
+                    .then((result) => {
+                        const data = {
+                            auth: true,
+                            updateData: result
+                        }
+                        resolve(data);
+                    })
+                    .catch((err) => {
+                        
+                        reject({ status: 402, message: 'Error al solicitar información', authDenied });
+                    });
+            })
+            .catch((err) => {
+                reject({ status: 401, message: 'error al autenticar token', authDenied })
+
+            })
+
+
+    })
+
+}
 
 module.exports = {
     getReport,
     getOneReport,
     addProduction,
-    getMostRecentReport
+    getMostRecentReport,
+    updateReportProduction
 }
 
 

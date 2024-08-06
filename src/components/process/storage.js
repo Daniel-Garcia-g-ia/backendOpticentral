@@ -28,7 +28,7 @@ async function getOne(equipmentId, date, turn) {
 function setProduction(dataProduction) {
     return new Promise((resolve, reject) => {
         const newProduction = new model(dataProduction);
-        
+
         newProduction.save()
             .then(result => {
                 resolve(result);
@@ -53,9 +53,35 @@ const getMostRecentReport = (equipmentId) => {
     });
 };
 
+function updateProductionReport(id, reportItem, processDataId, productionId, reportId) {
+    return new Promise((resolve, reject) => {
+
+
+
+
+        model.findById(id)
+            .then(document => {
+                const processData = document.processData.id(processDataId)
+                const production = processData.production.id(productionId)
+                const report = production.report.id(reportId)
+
+                report.productionReportItem.push(reportItem)
+                return document.save();
+
+            })
+            .then(updatedDocument => {
+                resolve(updatedDocument);
+            })
+            .catch(error => {
+                reject(new Error('Error al obtener el reporte'));
+            })
+    });
+}
+
 module.exports = {
     get,
     getOne,
     setProduction,
-    getMostRecentReport
+    getMostRecentReport,
+    updateProductionReport
 }

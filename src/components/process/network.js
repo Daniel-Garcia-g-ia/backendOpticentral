@@ -50,6 +50,16 @@ router.get('/mostRecentReport/:equipmentId', function (req, res) {
 
 })
 
+router.put('/updateData/:id', function (req, res) {
+    controller.updateReportProduction(req, res)
+        .then((result) => {
+            response.success(req, res, result, 200);
+        })
+        .catch((err) => {
+            response.error(req, res, 'Error al procesar solicitud', err.status, err.message, err.authDenied);
+        });
+});
+
 
 
 module.exports = router;

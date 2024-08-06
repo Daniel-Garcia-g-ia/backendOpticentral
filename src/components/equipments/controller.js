@@ -35,7 +35,10 @@ function getEquipments(req, res) {
 
 
 
-}
+};
+
+
+
 
 module.exports = {
     getEquipments

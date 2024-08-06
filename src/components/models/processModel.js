@@ -2,20 +2,71 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+
+const reportItemProduction = new Schema({
+    startTime: {
+        type: String,
+        requiered: false
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+    volume: {
+        type: Number,
+        required: false
+    }
+})
+
+const reportOpiItem = new Schema({
+    productionReportItem: {
+        type: [reportItemProduction],
+        required: true
+    }
+})
+
+
+
+const reportOPiSchmema = new Schema({
+    EBT: {
+        type: Number,
+        reqired: false,
+    },
+    downTime: {
+        type: [],
+        required: false
+    },
+    NST: {
+        type: [],
+        required: false
+    },
+    plannedDownTime: {
+        type: [],
+        required: false
+
+    }
+
+
+})
+
 const productionSchema = new Schema({
     brand: {
         type: String,
         required: false
     },
-    brewId:{
+    brewId: {
         type: Number,
         reqired: false,
     },
-    volume:{
+    volume: {
         type: Number,
         required: false
     },
-    release:{
+    release: {
         type: Boolean,
         required: false
     },
@@ -27,6 +78,10 @@ const productionSchema = new Schema({
     endTime: {
         type: String,
         required: false
+    },
+    report: {
+        type: [reportOpiItem],
+        required: true
     }
 
 })
@@ -36,8 +91,8 @@ const processDataSchema = new Schema({
         type: String,
         required: false,
     },
-    turn:{
-        type:String,
+    turn: {
+        type: String,
         required: true
     },
     release: {
@@ -48,8 +103,12 @@ const processDataSchema = new Schema({
         type: [productionSchema],
         required: false
 
+    },
+    OPI: {
+        type: [reportOPiSchmema],
+        required: false
     }
-        
+
 
 })
 
