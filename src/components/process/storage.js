@@ -53,19 +53,15 @@ const getMostRecentReport = (equipmentId) => {
     });
 };
 
-function updateProductionReport(id, reportItem, processDataId, productionId, reportId) {
+function updateProductionReport(id, reportItem, processDataId, productionId, reportId, typeReport) {
     return new Promise((resolve, reject) => {
-
-
-
-
         model.findById(id)
             .then(document => {
                 const processData = document.processData.id(processDataId)
                 const production = processData.production.id(productionId)
                 const report = production.report.id(reportId)
 
-                report.productionReportItem.push(reportItem)
+                report[typeReport].push(reportItem)
                 return document.save();
 
             })
@@ -77,6 +73,8 @@ function updateProductionReport(id, reportItem, processDataId, productionId, rep
             })
     });
 }
+
+
 
 module.exports = {
     get,
