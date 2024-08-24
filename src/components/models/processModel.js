@@ -22,9 +22,103 @@ const reportItemProduction = new Schema({
     }
 })
 
+const reportItemFault = new Schema({
+    startTime: {
+        type: String,
+        requiered: false
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+    system: {
+        type: String,
+        required: false
+    },
+    subSystem: {
+        type: String,
+        required: false
+    },
+    component: {
+        type: String,
+        required: false
+    },
+    failureMode: {
+        type: String,
+        required: false
+    },
+    solution: {
+        type: String,
+        required: false
+    }
+})
+
+const reportItemExternalStop = new Schema({
+    startTime: {
+        type: String,
+        requiered: false
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+    typeStop :{
+        type: String,
+        required: false
+    },
+    detailStop:{
+        type:String,
+        required:false
+    },
+    descriptionStop:{
+        type: String,
+        required: false
+    },
+    solution: {
+        type: String,
+        required: false
+    }
+})
+
+const reportItemUnscheduled= new Schema({
+    startTime: {
+        type: String,
+        requiered: false
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+
+})
+
 const reportOpiItem = new Schema({
     productionReportItem: {
         type: [reportItemProduction],
+        required: true
+    },
+    productionFaultItem: {
+        type: [reportItemFault],
+        required: true
+    },
+    productionExternalStopItem: {
+        type: [reportItemExternalStop],
+        required: true
+    },
+    productionUnscheduledItem: {
+        type: [reportItemUnscheduled],
         required: true
     }
 })
