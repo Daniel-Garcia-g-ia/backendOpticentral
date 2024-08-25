@@ -247,10 +247,10 @@ function updateReportProduction(req, res) {
                             reject({ status: 402, message: 'Error al solicitar información', authDenied });
                         });
 
-                } else {
+                } /* else {
                     reject({ status: 402, message: 'error por el tipo de informe', authDenied })
 
-                }
+                } */
 
 
             })
