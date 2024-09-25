@@ -33,7 +33,9 @@ router.post('/loginUser', function (req, res) {
 
 
 })
-
+router.get('/prueba', (req, res) => {
+    res.send('La API está funcionando');
+  });
 
 
 
