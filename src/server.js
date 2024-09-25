@@ -1,28 +1,28 @@
 const express = require('express');
-const ENV = require ('../config/index');
-const cors = require ('cors');
-const db = require ('./db');
-const router = require ('../network/routes');
-const bodyParser = require ('body-parser');
+const ENV = require('../config/index');
+const cors = require('cors');
+const db = require('./db');
+const router = require('../network/routes');
+const bodyParser = require('body-parser');
 
 // Función para inicializar el servidor
-function startServer() {
-    // Conectando a MongoDB
-    db(`mongodb+srv://${ENV.config.db_user}:${ENV.config.db_pass}@cluster0.5ftmkqd.mongodb.net/${ENV.config.db_name}?retryWrites=true&w=majority&appName=Cluster0`);
 
-    // Crear aplicación de Express
-    const app = express();
-    app.use(cors({ origin: '*' }));
-    app.use(bodyParser.json());
+// Conectando a MongoDB
+db(`mongodb+srv://${ENV.config.db_user}:${ENV.config.db_pass}@cluster0.5ftmkqd.mongodb.net/${ENV.config.db_name}?retryWrites=true&w=majority&appName=Cluster0`);
 
-    // Configurar las rutas
-    router(app);
+// Crear aplicación de Express
+const app = express();
+app.use(cors({ origin: '*' }));
+app.use(bodyParser.json());
 
-    // Iniciar el servidor
-    app.listen(ENV.config.port, () => {
-        console.log(`Servidor escuchando por el puerto ${ENV.config.port}`);
-    });
-}
+// Configurar las rutas
+router(app);
+
+// Iniciar el servidor
+app.listen(ENV.config.port, () => {
+    console.log(`Servidor escuchando por el puerto ${ENV.config.port}`);
+});
+
 
 // Exportar la función
 module.exports = startServer;
