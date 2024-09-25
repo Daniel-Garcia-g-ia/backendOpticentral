@@ -24,5 +24,4 @@ app.listen(ENV.config.port, () => {
 });
 
 
-// Exportar la función
-module.exports = startServer;
+
