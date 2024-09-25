@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 // Función para inicializar el servidor
 
 // Conectando a MongoDB
-console.log(ENV.config.url)
+
 
 db(`mongodb+srv://${ENV.config.db_user}:${ENV.config.db_pass}@cluster0.5ftmkqd.mongodb.net/${ENV.config.db_name}?retryWrites=true&w=majority&appName=Cluster0`);
 
