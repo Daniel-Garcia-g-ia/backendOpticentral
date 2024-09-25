@@ -17,6 +17,7 @@ router.get('/login', function (req, res) {
 
 })
 router.post('/loginUser', function (req, res) {
+    console.log('login') 
 
     if (!req.body || Object.keys(req.body).length === 0) {
         return response.error(req, res, "Error, el cuerpo de la solcitud está vacío", 500)
