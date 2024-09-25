@@ -4,7 +4,8 @@ const equiments = require ('../src/components/equipments/network')
 const process = require ('../src/components/process/network')
 
 
-const routes = function (server) {    
+const routes = function (server) {   
+    console.log('bug') 
     server.use(ENV.config.url, login);
     server.use(ENV.config.url, equiments);
     server.use(ENV.config.url, process);
