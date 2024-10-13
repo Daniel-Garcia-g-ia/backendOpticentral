@@ -22,7 +22,7 @@ const reportItemProduction = new Schema({
     }
 })
 
-const reportItemFault = new Schema({
+const reportItemIC = new Schema({
     startTime: {
         type: String,
         requiered: false
@@ -48,6 +48,10 @@ const reportItemFault = new Schema({
         required: false
     },
     failureMode: {
+        type: String,
+        required: false
+    },
+    machine: {
         type: String,
         required: false
     },
@@ -109,7 +113,7 @@ const reportOpiItem = new Schema({
         type: [reportItemProduction],
         required: true
     },
-    productionFaultItem: {
+    productionICItem: {
         type: [reportItemFault],
         required: true
     },
