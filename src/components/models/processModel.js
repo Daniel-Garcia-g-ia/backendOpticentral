@@ -113,7 +113,7 @@ const reportOpiItem = new Schema({
         type: [reportItemProduction],
         required: true
     },
-    productionICItem: {
+    /* productionICItem: {
         type: [reportItemIC],
         required: true
     },
@@ -124,7 +124,7 @@ const reportOpiItem = new Schema({
     productionUnscheduledItem: {
         type: [reportItemUnscheduled],
         required: true
-    }
+    } */
 })
 
 
