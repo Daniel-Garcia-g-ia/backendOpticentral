@@ -114,7 +114,7 @@ const reportOpiItem = new Schema({
         required: true
     },
     productionICItem: {
-        type: [reportItemFault],
+        type: [reportItemIC],
         required: true
     },
     productionExternalStopItem: {
