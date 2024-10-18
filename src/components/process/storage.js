@@ -54,13 +54,14 @@ const getMostRecentReport = (equipmentId) => {
 };
 
 function updateProductionReport(id, reportItem, processDataId, productionId, reportId, typeReport) {
+    
     return new Promise((resolve, reject) => {
         model.findById(id)
             .then(document => {
                 const processData = document.processData.id(processDataId)
                 const production = processData.production.id(productionId)
                 const report = production.report.id(reportId)
-
+                console.log(reportItem)    
                 report[typeReport].push(reportItem)
                 return document.save();
 
@@ -74,6 +75,27 @@ function updateProductionReport(id, reportItem, processDataId, productionId, rep
     });
 }
 
+function updateICReport(id, reportItem, processDataId,typeReport) {    
+    
+    return new Promise((resolve, reject) => {        
+        model.findById(id)
+            .then(document => {
+                const report = document.processData.id(processDataId)
+                const repo = report.OPI[0]             
+                             
+                repo[typeReport].push(reportItem)
+                return document.save(); 
+                
+            }).then(updatedDocument => {
+                resolve(updatedDocument);
+            })
+            .catch(error => {
+                reject(new Error('Error al obtener el reporte'));
+            })
+    })
+
+}
+
 
 
 module.exports = {
@@ -81,5 +103,6 @@ module.exports = {
     getOne,
     setProduction,
     getMostRecentReport,
-    updateProductionReport
+    updateProductionReport,
+    updateICReport
 }

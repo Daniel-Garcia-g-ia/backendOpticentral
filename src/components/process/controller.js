@@ -171,22 +171,20 @@ function getMostRecentReport(req, res) {
 function updateReportProduction(req, res) {
     const token = req.headers['x-access-token']
     const { id } = req.params;
-    const { processDataId, productionId, reportId } = req.body
     const { typeReport } = req.body
+
     const authDenied = {
         auth: false,
     }
-
-
 
     return new Promise((resolve, reject) => {
         jwt.verifyToken(token)
             .then((decoded) => {
 
                 if (typeReport === 'production') {
-                    
+
                     const { startTime, endTime, totalTime, volume, productionReportItem } = req.body
-                    storage.updateProductionReport(id, { startTime, endTime, totalTime, volume }, processDataId, productionId, reportId, productionReportItem)
+                    storage.updateProductionReport(id, { startTime, endTime, totalTime, volume }, req.body.processDataId, req.body.productionId, req.body.reportId, productionReportItem)
                         .then((result) => {
                             const data = {
                                 auth: true,
@@ -199,10 +197,13 @@ function updateReportProduction(req, res) {
                             reject({ status: 402, message: 'Error al solicitar información', authDenied });
                         });
 
-                } else if (typeReport === 'fault') {
-                    const { startTime, endTime, totalTime, system, subSystem, component, failureMode, solution, productionFaultItem } = req.body
-                    storage.updateProductionReport(id, { startTime, endTime, totalTime, system, subSystem, component, failureMode, solution },
-                        processDataId, productionId, reportId, productionFaultItem)
+                } else if (typeReport === 'IC') {
+
+                    const { startTime, endTime, totalTime, system, subSystem, component, failureMode, machine, solution } = req.body
+
+
+                    storage.updateICReport(id, { startTime, endTime, totalTime, system, subSystem, component, failureMode, machine, solution },
+                        req.body.processDataId, typeReport)
                         .then((result) => {
                             const data = {
                                 auth: true,
@@ -215,10 +216,12 @@ function updateReportProduction(req, res) {
                             reject({ status: 402, message: 'Error al solicitar información', authDenied });
                         });
 
-                } else if (typeReport === 'external') {
-                    const { startTime, endTime, totalTime, typeStop, detailStop, descriptionStop, solution, productionExternalStopItem  } = req.body
-                    storage.updateProductionReport(id, { startTime, endTime, totalTime,typeStop,detailStop,descriptionStop, solution },
-                        processDataId, productionId, reportId, productionExternalStopItem)
+                } else if (typeReport === 'EC') {                   
+                    
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution } = req.body   
+                                                      
+                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution },
+                        req.body.processDataId, typeReport)
                         .then((result) => {
                             const data = {
                                 auth: true,
@@ -231,10 +234,14 @@ function updateReportProduction(req, res) {
                             reject({ status: 402, message: 'Error al solicitar información', authDenied });
                         });
 
-                } else if (typeReport === 'Unscheduled') {
-                    const { startTime, endTime, totalTime, productionUnscheduledItem } = req.body
-                    storage.updateProductionReport(id, { startTime, endTime, totalTime },
-                        processDataId, productionId, reportId, productionUnscheduledItem)
+
+                
+
+                }else if (typeReport === 'DPA'){
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution } = req.body   
+                                                        
+                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution },
+                        req.body.processDataId, typeReport)
                         .then((result) => {
                             const data = {
                                 auth: true,
@@ -247,10 +254,30 @@ function updateReportProduction(req, res) {
                             reject({ status: 402, message: 'Error al solicitar información', authDenied });
                         });
 
-                } /* else {
+
+                } else if (typeReport === 'NST'){
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, solution } = req.body   
+                                                      
+                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, solution },
+                        req.body.processDataId, typeReport)
+                        .then((result) => {
+                            const data = {
+                                auth: true,
+                                updateData: result
+                            }
+                            resolve(data);
+                        })
+                        .catch((err) => {
+
+                            reject({ status: 402, message: 'Error al solicitar información', authDenied });
+                        });
+
+
+                }
+                else {
                     reject({ status: 402, message: 'error por el tipo de informe', authDenied })
 
-                } */
+                }
 
 
             })

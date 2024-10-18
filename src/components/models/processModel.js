@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const reportItemProduction = new Schema({
     startTime: {
         type: String,
-        requiered: false
+        required: false
     },
     endTime: {
         type: String,
@@ -25,7 +25,46 @@ const reportItemProduction = new Schema({
 const reportItemIC = new Schema({
     startTime: {
         type: String,
-        requiered: false
+        required: true
+    },
+    endTime: {
+        type: String,
+        required: true
+    },
+    totalTime: {
+        type: Number,
+        required: true
+    },
+    system: {
+        type: String,
+        required: true
+    },
+    subSystem: {
+        type: String,
+        required: true
+    },
+    component: {
+        type: String,
+        required: true
+    },
+    failureMode: {
+        type: String,
+        required: true
+    },
+    machine: {
+        type: String,
+        required: true
+    },
+    solution: {
+        type: String,
+        required: true
+    }
+})
+
+const reportItemEC = new Schema({
+    startTime: {
+        type: String,
+        required: false
     },
     endTime: {
         type: String,
@@ -35,15 +74,11 @@ const reportItemIC = new Schema({
         type: Number,
         required: false
     },
-    system: {
+    typeStop: {
         type: String,
         required: false
     },
-    subSystem: {
-        type: String,
-        required: false
-    },
-    component: {
+    subTypeStop: {
         type: String,
         required: false
     },
@@ -51,7 +86,34 @@ const reportItemIC = new Schema({
         type: String,
         required: false
     },
-    machine: {
+    solution: {
+        type: String,
+        required: false
+    }
+})
+
+const reportItemDPA = new Schema({
+    startTime: {
+        type: String,
+        required: false
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },    
+    typeStop: {
+        type: String,
+        required: false
+    },
+    subTypeStop: {
+        type: String,
+        required: false
+    },
+    specification: {
         type: String,
         required: false
     },
@@ -59,12 +121,13 @@ const reportItemIC = new Schema({
         type: String,
         required: false
     }
-})
 
-const reportItemExternalStop = new Schema({
+
+})
+const reportItemNST = new Schema({
     startTime: {
         type: String,
-        requiered: false
+        required: false
     },
     endTime: {
         type: String,
@@ -74,37 +137,18 @@ const reportItemExternalStop = new Schema({
         type: Number,
         required: false
     },
-    typeStop :{
+    typeStop: {
         type: String,
         required: false
     },
-    detailStop:{
-        type:String,
-        required:false
-    },
-    descriptionStop:{
+    subTypeStop: {
         type: String,
         required: false
-    },
+    },   
     solution: {
         type: String,
         required: false
     }
-})
-
-const reportItemUnscheduled= new Schema({
-    startTime: {
-        type: String,
-        requiered: false
-    },
-    endTime: {
-        type: String,
-        required: false
-    },
-    totalTime: {
-        type: Number,
-        required: false
-    },
 
 })
 
@@ -113,41 +157,28 @@ const reportOpiItem = new Schema({
         type: [reportItemProduction],
         required: true
     },
-    /* productionICItem: {
-        type: [reportItemIC],
-        required: true
-    },
-    productionExternalStopItem: {
-        type: [reportItemExternalStop],
-        required: true
-    },
-    productionUnscheduledItem: {
-        type: [reportItemUnscheduled],
-        required: true
-    } */
+
 })
 
 
 
 const reportOPiSchmema = new Schema({
-    EBT: {
-        type: Number,
-        reqired: false,
+    IC: {
+        type: [reportItemIC],
+        required: false
     },
-    downTime: {
-        type: [],
+    EC: {
+        type: [reportItemEC],
+        required: false
+    },
+    DPA: {
+        type: [reportItemDPA],
         required: false
     },
     NST: {
-        type: [],
+        type: [reportItemNST],
         required: false
-    },
-    plannedDownTime: {
-        type: [],
-        required: false
-
     }
-
 
 })
 
@@ -204,7 +235,7 @@ const processDataSchema = new Schema({
     },
     OPI: {
         type: [reportOPiSchmema],
-        required: false
+        required: true
     }
 
 
