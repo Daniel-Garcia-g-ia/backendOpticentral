@@ -216,10 +216,10 @@ function updateReportProduction(req, res) {
                             reject({ status: 402, message: 'Error al solicitar información', authDenied });
                         });
 
-                } else if (typeReport === 'EC') {                   
-                    
-                    const { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution } = req.body   
-                                                      
+                } else if (typeReport === 'EC') {
+
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution } = req.body
+
                     storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution },
                         req.body.processDataId, typeReport)
                         .then((result) => {
@@ -235,11 +235,11 @@ function updateReportProduction(req, res) {
                         });
 
 
-                
 
-                }else if (typeReport === 'DPA'){
-                    const { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution } = req.body   
-                                                        
+
+                } else if (typeReport === 'DPA') {
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution } = req.body
+
                     storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution },
                         req.body.processDataId, typeReport)
                         .then((result) => {
@@ -255,9 +255,9 @@ function updateReportProduction(req, res) {
                         });
 
 
-                } else if (typeReport === 'NST'){
-                    const { startTime, endTime, totalTime, typeStop, subTypeStop, solution } = req.body   
-                                                      
+                } else if (typeReport === 'NST') {
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, solution } = req.body
+
                     storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, solution },
                         req.body.processDataId, typeReport)
                         .then((result) => {
@@ -291,13 +291,75 @@ function updateReportProduction(req, res) {
     })
 
 }
+function updateOneReport(req, res) {
+    const token = req.headers['x-access-token'];
+    const { id } = req.params;
+    const { typeReport, processDataId, OPI_id, reportId, updateData } = req.body
+    const { productionId, itemReportId } = req.body
+
+    const authDenied = {
+        auth: false,
+    }
+    return new Promise((resolve, reject) => {
+        jwt.verifyToken(token)
+            .then((decoded) => {
+
+                if (typeReport !== 'EBT') {
+
+                    storage.oneUpdateReport(id, processDataId, OPI_id, typeReport, reportId, updateData)
+                        .then((result) => {
+                            const data = {
+                                auth: true,
+                                updateData: result
+                            }
+                            resolve(data);
+
+
+                        }).catch((err) => {
+
+                            reject({ status: 402, message: `Error al solicitar información error: ${err}`, authDenied });
+                        });
+
+
+                } else if (typeReport === 'EBT') {
+                    storage.oneUpdateProductionReport(id, processDataId, productionId, reportId, itemReportId, updateData)
+                        .then((result) => {
+                            const data = {
+                                auth: true,
+                                updateData: result
+                            }
+                            resolve(data);
+
+
+                        }).catch((err) => {
+
+                            reject({ status: 402, message: `Error al solicitar información error: ${err}`, authDenied });
+                        });
+                }
+
+                else {
+                    reject({ status: 402, message: `Error en el tipo de reporte`, authDenied });
+
+                }
+
+
+            }).catch((err) => {
+                reject({ status: 401, message: `error al autenticar token, error: ${err}`, authDenied })
+
+
+            })
+
+    })
+}
 
 module.exports = {
     getReport,
     getOneReport,
     addProduction,
     getMostRecentReport,
-    updateReportProduction
+    updateReportProduction,
+    updateOneReport
+
 }
 
 

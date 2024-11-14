@@ -54,14 +54,14 @@ const getMostRecentReport = (equipmentId) => {
 };
 
 function updateProductionReport(id, reportItem, processDataId, productionId, reportId, typeReport) {
-    
+
     return new Promise((resolve, reject) => {
         model.findById(id)
             .then(document => {
                 const processData = document.processData.id(processDataId)
                 const production = processData.production.id(productionId)
                 const report = production.report.id(reportId)
-                console.log(reportItem)    
+                console.log(reportItem)
                 report[typeReport].push(reportItem)
                 return document.save();
 
@@ -75,17 +75,17 @@ function updateProductionReport(id, reportItem, processDataId, productionId, rep
     });
 }
 
-function updateICReport(id, reportItem, processDataId,typeReport) {    
-    
-    return new Promise((resolve, reject) => {        
+function updateICReport(id, reportItem, processDataId, typeReport) {
+
+    return new Promise((resolve, reject) => {
         model.findById(id)
             .then(document => {
                 const report = document.processData.id(processDataId)
-                const repo = report.OPI[0]             
-                             
+                const repo = report.OPI[0]
+
                 repo[typeReport].push(reportItem)
-                return document.save(); 
-                
+                return document.save();
+
             }).then(updatedDocument => {
                 resolve(updatedDocument);
             })
@@ -94,6 +94,75 @@ function updateICReport(id, reportItem, processDataId,typeReport) {
             })
     })
 
+}
+function oneUpdateReport(id, processDataId, OPI_id, typeReport, reportId, updateData) {
+    return new Promise((resolve, reject) => {
+        model.findById(id)
+            .then(document => {
+
+                const processData = document.processData.find(p => p._id.toString() === processDataId)
+                if (!processData) {
+                    reject(new Error('Process Data no encontrado'));
+                }
+                const OPIReport = processData.OPI.find(opi => opi._id.toString() === OPI_id)
+                if (!OPIReport) {
+                    reject(new Error('Reporte no encontrado'));
+                }
+                const report = OPIReport[typeReport]
+
+                const reportItem = report.find(r => r._id.toString() === reportId)
+
+                Object.assign(reportItem, updateData)
+
+                return document.save()
+
+
+            }).then(updateDocuemnt => {
+                resolve(updateDocuemnt)
+            }).catch(error => {
+                reject(new Error('Error al obtener el reporte' + error.message));
+            })
+    })
+}
+function oneUpdateProductionReport(id, processDataId, productionId, reportId, itemReportId, updateData) {
+    return new Promise((resolve, reject) => {
+
+        model.findById(id)
+            .then(document => {
+                const processData = document.processData.find(p => p._id.toString() === processDataId)
+                if (!processData) {
+                    reject(new Error('Process Data no encontrado'));
+                }
+                const production = processData.production.find(p => p._id.toString() === productionId)
+
+                if (!production) {
+                    reject(new Error('Producción no encontrada'));
+                }
+
+                const report = production.report.find(r => r._id.toString() === reportId)
+
+                if (!report) {
+                    reject(new Error('Reporte no encontrado'));
+                }
+
+                const itemReport = report.productionReportItem.find(i => i._id.toString() === itemReportId)
+                if (!itemReport) {
+                    reject(new Error('Reporte no encontrado'));
+                }
+
+                Object.assign(itemReport, updateData)
+                return document.save()
+
+
+
+
+            }).then(updateDocuemnt => {
+                resolve(updateDocuemnt)
+            })
+            .catch(error => {
+                reject(new Error('Error al obtener el reporte' + error.message));
+            })
+    })
 }
 
 
@@ -104,5 +173,7 @@ module.exports = {
     setProduction,
     getMostRecentReport,
     updateProductionReport,
-    updateICReport
+    updateICReport,
+    oneUpdateReport,
+    oneUpdateProductionReport
 }

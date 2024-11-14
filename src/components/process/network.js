@@ -60,6 +60,18 @@ router.put('/updateData/:id', function (req, res) {
         });
 });
 
+router.put('/updateData/report/:id', function (req, res) {
+  
+    controller.updateOneReport(req, res)
+        .then((result) => {
+            response.success(req, res, result, 200);
+        })
+        .catch((err) => {
+            response.error(req, res, 'Error al procesar solicitud', err.status, err.message, err.authDenied);
+        });
+});
+
+
 
 
 module.exports = router;
