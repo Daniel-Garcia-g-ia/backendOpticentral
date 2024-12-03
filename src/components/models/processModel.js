@@ -4,6 +4,14 @@ const Schema = mongoose.Schema;
 
 
 const reportItemProduction = new Schema({
+    turn:{
+        type: String,
+        required:false
+    },
+    date: {
+        type: String,
+        required: false,
+    },
     startTime: {
         type: String,
         required: false
@@ -23,6 +31,14 @@ const reportItemProduction = new Schema({
 })
 
 const reportItemIC = new Schema({
+    turn:{
+        type: String,
+        required:false
+    },
+    date: {
+        type: String,
+        required: false,
+    },
     startTime: {
         type: String,
         required: true
@@ -62,6 +78,14 @@ const reportItemIC = new Schema({
 })
 
 const reportItemEC = new Schema({
+    turn:{
+        type: String,
+        required:false
+    },
+    date: {
+        type: String,
+        required: false,
+    },
     startTime: {
         type: String,
         required: false
@@ -93,6 +117,14 @@ const reportItemEC = new Schema({
 })
 
 const reportItemDPA = new Schema({
+    turn:{
+        type: String,
+        required:false
+    },
+    date: {
+        type: String,
+        required: false,
+    },
     startTime: {
         type: String,
         required: false
@@ -125,6 +157,14 @@ const reportItemDPA = new Schema({
 
 })
 const reportItemNST = new Schema({
+    turn:{
+        type: String,
+        required:false
+    },
+    date: {
+        type: String,
+        required: false,
+    },
     startTime: {
         type: String,
         required: false

@@ -9,21 +9,35 @@ async function get() {
 
 async function getOne(equipmentId, date, turn) {
     try {
+        const currentDate = new Date(date);
+        const previousDate = new Date(currentDate);
+        previousDate.setDate(currentDate.getDate() - 1);
+
+        const formattedCurrentDate = currentDate.toISOString().split('T')[0];
+        const formattedPreviousDate = previousDate.toISOString().split('T')[0];
+
+        // Utilizamos el operador $elemMatch para acceder a campos dentro de un array (si es el caso)
         const process = await model.find({
             equipmentId: equipmentId,
-            "processData.date": date,
-            "processData.turn": turn
-        })
+            processData: {
+                $elemMatch: {
+                    date: {
+                        $gte: formattedPreviousDate, // Día anterior
+                        $lte: formattedCurrentDate  // Día actual
+                    },
+                    // Incluimos el turno si se proporciona
+                }
+            }
+        });
 
-        return process
+        return process;
 
     } catch (error) {
-        throw new Error('Error al obtener el reporte')
+        console.error('Error al obtener el reporte:', error.message);
+        throw new Error('Error al obtener el reporte');
     }
-
-
-
 }
+
 
 function setProduction(dataProduction) {
     return new Promise((resolve, reject) => {
@@ -151,6 +165,7 @@ function oneUpdateProductionReport(id, processDataId, productionId, reportId, it
                 }
 
                 Object.assign(itemReport, updateData)
+                console.log(updateData)
                 return document.save()
 
 

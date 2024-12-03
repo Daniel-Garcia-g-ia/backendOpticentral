@@ -183,8 +183,8 @@ function updateReportProduction(req, res) {
 
                 if (typeReport === 'production') {
 
-                    const { startTime, endTime, totalTime, volume, productionReportItem } = req.body
-                    storage.updateProductionReport(id, { startTime, endTime, totalTime, volume }, req.body.processDataId, req.body.productionId, req.body.reportId, productionReportItem)
+                    const { startTime, endTime, totalTime, volume, productionReportItem, date, turn } = req.body
+                    storage.updateProductionReport(id, { startTime, endTime, totalTime, volume, date, turn }, req.body.processDataId, req.body.productionId, req.body.reportId, productionReportItem)
                         .then((result) => {
                             const data = {
                                 auth: true,
@@ -199,10 +199,10 @@ function updateReportProduction(req, res) {
 
                 } else if (typeReport === 'IC') {
 
-                    const { startTime, endTime, totalTime, system, subSystem, component, failureMode, machine, solution } = req.body
+                    const { startTime, endTime, totalTime, system, subSystem, component, failureMode, machine, solution, date, turn } = req.body
 
 
-                    storage.updateICReport(id, { startTime, endTime, totalTime, system, subSystem, component, failureMode, machine, solution },
+                    storage.updateICReport(id, { startTime, endTime, totalTime, system, subSystem, component, failureMode, machine, solution, date, turn },
                         req.body.processDataId, typeReport)
                         .then((result) => {
                             const data = {
@@ -218,9 +218,9 @@ function updateReportProduction(req, res) {
 
                 } else if (typeReport === 'EC') {
 
-                    const { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution } = req.body
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution, date, turn } = req.body
 
-                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution },
+                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, failureMode, solution, date, turn },
                         req.body.processDataId, typeReport)
                         .then((result) => {
                             const data = {
@@ -238,9 +238,9 @@ function updateReportProduction(req, res) {
 
 
                 } else if (typeReport === 'DPA') {
-                    const { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution } = req.body
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution, date, turn } = req.body
 
-                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution },
+                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, specification, solution, date, turn },
                         req.body.processDataId, typeReport)
                         .then((result) => {
                             const data = {
@@ -256,9 +256,9 @@ function updateReportProduction(req, res) {
 
 
                 } else if (typeReport === 'NST') {
-                    const { startTime, endTime, totalTime, typeStop, subTypeStop, solution } = req.body
+                    const { startTime, endTime, totalTime, typeStop, subTypeStop, solution, date, turn } = req.body
 
-                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, solution },
+                    storage.updateICReport(id, { startTime, endTime, totalTime, typeStop, subTypeStop, solution, date, turn },
                         req.body.processDataId, typeReport)
                         .then((result) => {
                             const data = {
