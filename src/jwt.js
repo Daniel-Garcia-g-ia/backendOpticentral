@@ -4,7 +4,7 @@ const ENV = require ('../config')
 
 function generateToken (userID){
   const payload = {userID};
-  const options = { expiresIn: 60*60*4};
+  const options = { expiresIn: 60*60*8};
   const token = jwt.sign(payload, ENV.config.secret_key, options);
   return token
 }

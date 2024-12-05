@@ -1,5 +1,6 @@
 const model = require('../models/processModel');
 
+
 async function get() {
     const process = await model.find();
     return process
@@ -8,6 +9,8 @@ async function get() {
 
 
 async function getOne(equipmentId, date, turn) {
+
+   
     try {
         const process = await model.find({
             equipmentId: equipmentId,
