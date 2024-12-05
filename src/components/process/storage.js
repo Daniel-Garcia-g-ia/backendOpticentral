@@ -9,8 +9,6 @@ async function get() {
 
 
 async function getOne(equipmentId, date, turn) {
-
-   
     try {
         const currentDate = new Date(date);
         const previousDate = new Date(currentDate);
