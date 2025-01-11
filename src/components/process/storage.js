@@ -76,7 +76,7 @@ function updateProductionReport(id, reportItem, processDataId, productionId, rep
                 const processData = document.processData.id(processDataId)
                 const production = processData.production.id(productionId)
                 const report = production.report.id(reportId)
-                console.log(reportItem)
+               
                 report[typeReport].push(reportItem)
                 return document.save();
 
@@ -166,7 +166,7 @@ function oneUpdateProductionReport(id, processDataId, productionId, reportId, it
                 }
 
                 Object.assign(itemReport, updateData)
-                console.log(updateData)
+                
                 return document.save()
 
 
