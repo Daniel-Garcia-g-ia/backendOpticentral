@@ -76,7 +76,7 @@ function updateProductionReport(id, reportItem, processDataId, productionId, rep
                 const processData = document.processData.id(processDataId)
                 const production = processData.production.id(productionId)
                 const report = production.report.id(reportId)
-               
+
                 report[typeReport].push(reportItem)
                 return document.save();
 
@@ -166,7 +166,7 @@ function oneUpdateProductionReport(id, processDataId, productionId, reportId, it
                 }
 
                 Object.assign(itemReport, updateData)
-                
+
                 return document.save()
 
 
@@ -182,6 +182,36 @@ function oneUpdateProductionReport(id, processDataId, productionId, reportId, it
 }
 
 
+function downloadReport(date1, date2) {  
+      
+    return new Promise((resolve, reject) => {
+        const startDate = new Date(date1);
+        const endDate = new Date(date2);
+        const formattedStartTime = startDate.toISOString().split('T')[0];
+        const formattedEndTime = endDate.toISOString().split('T')[0];       
+
+        model.find({            
+            processData: {
+                $elemMatch: {
+                    date: {
+                        $gte: formattedStartTime , // Día anterior
+                        $lte: formattedEndTime  // Día actual
+                    },
+                    // Incluimos el turno si se proporciona
+                }
+            }
+        })
+        .then(result => {
+            
+            resolve(result);
+        })
+        .catch(error => {
+            reject(new Error('Error al obtener el reporte: ' + error.message));
+        });
+    });
+}
+
+
 
 module.exports = {
     get,
@@ -191,5 +221,6 @@ module.exports = {
     updateProductionReport,
     updateICReport,
     oneUpdateReport,
-    oneUpdateProductionReport
+    oneUpdateProductionReport,
+    downloadReport
 }

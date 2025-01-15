@@ -71,6 +71,19 @@ router.put('/updateData/report/:id', function (req, res) {
         });
 });
 
+router.get('/download', function (req, res) {
+    
+    controller.downloadreport(req, res)
+        .then((result) => { 
+                      
+            response.success(req, res, result, 200);
+        })
+        .catch((err) => {
+            response.error(req, res, 'Error al procesar informacion', err.status, err.message, err.authDenied)
+        })
+})
+
+
 
 
 
