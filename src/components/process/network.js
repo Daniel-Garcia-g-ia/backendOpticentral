@@ -71,7 +71,7 @@ router.put('/updateData/report/:id', function (req, res) {
         });
 });
 
-router.get('/download', function (req, res) {
+router.post('/download', function (req, res) {
     
     controller.downloadreport(req, res)
         .then((result) => { 
