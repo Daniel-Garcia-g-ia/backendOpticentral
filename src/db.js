@@ -7,6 +7,7 @@ async function connect(url) {
         await db.connect(url)
         console.log('[db] Conexión exitosa');
     } catch (error) {
+        console.log(url)
         console.error('[db] Error de conexión:', error.message);
     }
 }

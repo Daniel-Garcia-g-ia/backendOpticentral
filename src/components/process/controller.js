@@ -1,5 +1,7 @@
 const storage = require('./storage');
 const jwt = require('../../jwt');
+const generateExcel = require('../../services')
+const fs = require('fs');
 
 function getReport(req, res) {
 
@@ -52,7 +54,7 @@ function getOneReport(req, res) {
                 const equipmentId = req.params.equipmentId
                 const date = req.params.date
                 const turn = req.params.turn
-               
+
 
 
                 storage.getOne(equipmentId, date, turn)
@@ -353,51 +355,67 @@ function updateOneReport(req, res) {
     })
 }
 
-function downloadreport(req,res){
+function downloadreport(req, res) {
     const token = req.headers['x-access-token'];
-    const {date1, date2}= req.body;
+    const { date1, date2 } = req.body;
     const authDenied = {
         auth: false,
-    }   
-    return new Promise((resolve,reject)=>{
+    }
+    return new Promise((resolve, reject) => {
         jwt.verifyToken(token)
-            .then((decoded) => {  
-                           
+            .then((decoded) => {
+
                 storage.downloadReport(date1, date2)
                     .then((result) => {
-                        const data = {
-                            auth: true,
-                            data: result
-                        }
+                        const filePath = generateExcel(result);
+                        res.download(filePath, 'reporte.xlsx', (err) => {
 
-                        resolve(data)
+                            if (err) {
+                                console.error('Error al enviar el archivo:', err);
+                                reject({
+                                    status: 500,
+                                    message: 'Error al generar el archivo.',
+                                    auth: false,
+                                });
+                            } else {
+                                // Eliminar el archivo temporal después de enviarlo
+                                fs.unlinkSync(filePath);
+                                resolve({
+                                    status: 200,
+                                    message: 'Archivo enviado correctamente.',
+                                    auth: true,
+                                });
 
+                            }
+                        })
+
+
+                        }).catch((err) => {
+
+                            reject({ status: 402, message: 'error al solicitar informacion', authDenied })
+
+                        })
                     }).catch((err) => {
 
-                        reject({ status: 402, message: 'error al solicitar informacion', authDenied })
-
+                        reject({ status: 401, message: 'error al autenticar token', authDenied })
                     })
-            }).catch((err) => {
 
-                reject({ status: 401, message: 'error al autenticar token', authDenied })
             })
 
-    })
 
 
-    
-}
+    }
 
 module.exports = {
-    getReport,
-    getOneReport,
-    addProduction,
-    getMostRecentReport,
-    updateReportProduction,
-    updateOneReport,
-    downloadreport
+            getReport,
+            getOneReport,
+            addProduction,
+            getMostRecentReport,
+            updateReportProduction,
+            updateOneReport,
+            downloadreport
 
-}
+        }
 
 
 
