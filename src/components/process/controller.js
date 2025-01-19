@@ -367,27 +367,12 @@ function downloadreport(req, res) {
 
                 storage.downloadReport(date1, date2)
                     .then((result) => {
-                        const filePath = generateExcel(result);
-                        res.download(filePath, 'reporte.xlsx', (err) => {
-
-                            if (err) {
-                                console.error('Error al enviar el archivo:', err);
-                                reject({
-                                    status: 500,
-                                    message: 'Error al generar el archivo.',
-                                    auth: false,
-                                });
-                            } else {
-                                // Eliminar el archivo temporal después de enviarlo
-                                fs.unlinkSync(filePath);
-                                resolve({
-                                    status: 200,
-                                    message: 'Archivo enviado correctamente.',
-                                    auth: true,
-                                });
-
-                            }
-                        })
+                        const data = {
+                            auth: true,
+                            updateData: result
+                        }
+                        resolve(data);
+                        
 
 
                         }).catch((err) => {
