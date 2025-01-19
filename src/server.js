@@ -10,7 +10,8 @@ const bodyParser = require('body-parser');
 // Conectando a MongoDB
 
 
-db(`mongodb+srv://${ENV.config.db_user}:${ENV.config.db_pass}@cluster0.5ftmkqd.mongodb.net/${ENV.config.db_name}?retryWrites=true&w=majority&appName=Cluster0`);
+db(`mongodb+srv://danielg1393:${ENV.config.db_pass}@cluster0.5ftmkqd.mongodb.net/${ENV.config.db_name}?retryWrites=true&w=majority&appName=Cluster0`);
+
 
 // Crear aplicación de Express
 const app = express();
