@@ -371,8 +371,7 @@ function downloadreport(req, res) {
                             auth: true,
                             updateData: result
                         }
-                        resolve(data);
-                        
+                        resolve(data);                    
 
 
                         }).catch((err) => {
