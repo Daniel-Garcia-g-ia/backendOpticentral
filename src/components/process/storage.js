@@ -1,4 +1,6 @@
 const model = require('../models/processModel');
+const modelOpi = require('../models/opiModel');
+const { overwriteMiddlewareResult } = require('mongoose');
 
 
 async function get() {
@@ -8,7 +10,7 @@ async function get() {
 
 
 
-async function getOne(equipmentId, date, turn) {
+async function getOne(equipmentId, date) {
     try {
         const currentDate = new Date(date);
         const previousDate = new Date(currentDate);
@@ -38,6 +40,82 @@ async function getOne(equipmentId, date, turn) {
         throw new Error('Error al obtener el reporte');
     }
 }
+
+function getOpiReport(equipmentId, date, turn) {
+    return new Promise((resolve, reject) => {
+        modelOpi.aggregate([
+            {
+                $match: { equipmentId: equipmentId }
+            },
+            {
+                $project: {
+                    equipmentId: 1,
+                    equipmentName: 1,
+                    location: 1,
+                    report: {
+                        $map: {
+                            input: "$report",
+                            as: "rep",
+                            in: {
+                                IC: {
+                                    $filter: {
+                                        input: "$$rep.IC",
+                                        as: "ic",
+                                        cond: {
+                                            $and: [
+                                                { $eq: ["$$ic.date", date] },
+                                                { $eq: ["$$ic.turn", turn] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                EC: {
+                                    $filter: {
+                                        input: "$$rep.EC",
+                                        as: "ec",
+                                        cond: {
+                                            $and: [
+                                                { $eq: ["$$ec.date", date] },
+                                                { $eq: ["$$ec.turn", turn] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                DPA: {
+                                    $filter: {
+                                        input: "$$rep.DPA",
+                                        as: "dpa",
+                                        cond: {
+                                            $and: [
+                                                { $eq: ["$$dpa.date", date] },
+                                                { $eq: ["$$dpa.turn", turn] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                NST: {
+                                    $filter: {
+                                        input: "$$rep.NST",
+                                        as: "nst",
+                                        cond: {
+                                            $and: [
+                                                { $eq: ["$$nst.date", date] },
+                                                { $eq: ["$$nst.turn", turn] }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ])
+        .then(result => resolve(result))
+        .catch(error => reject(new Error('Error al obtener el reporte: ' + error.message)));
+    });
+}
+
 
 
 function setProduction(dataProduction) {
@@ -110,29 +188,71 @@ function updateICReport(id, reportItem, processDataId, typeReport) {
     })
 
 }
+
+function ICreport(infoReport, typeReport) {
+    return new Promise((resolve, reject) => {
+
+        modelOpi.findOne({ "equipmentId": infoReport.equipmentId })
+            .then(result => {
+
+                if (result) {
+                    result.report[0][typeReport].push(infoReport)
+                    return result.save()
+                } else {
+
+                    const newReport = {
+                        equipmentId: infoReport.equipmentId,
+                        equipmentName: infoReport.equipmentName,
+                        location: infoReport.location,
+                        report: [
+                            {
+                                IC: [],
+                                EC: [],
+                                DPA: [],
+                                NST: [],
+                            },
+                        ],
+
+
+                    };
+
+                    newReport.report[0][typeReport].push(infoReport);
+
+                    const report = new modelOpi(newReport);
+
+                    return report.save();
+
+                }
+            }).then(result => {
+                resolve(result)
+            }).catch(error => {
+                reject(new Error('Error al obtener el reporte' + error.message));
+            })
+
+
+
+
+
+    })
+}
+
+
+
+
 function oneUpdateReport(id, processDataId, OPI_id, typeReport, reportId, updateData) {
     return new Promise((resolve, reject) => {
-        model.findById(id)
+        modelOpi.findById(id)
             .then(document => {
+                   
+                const reports = document.report[0]
+                const reporte = reports[typeReport]
+                const updatedReport= reporte.find(p=>p._id.toString()===reportId)
+                Object.assign(updatedReport, updateData)
 
-                const processData = document.processData.find(p => p._id.toString() === processDataId)
-                if (!processData) {
-                    reject(new Error('Process Data no encontrado'));
-                }
-                const OPIReport = processData.OPI.find(opi => opi._id.toString() === OPI_id)
-                if (!OPIReport) {
-                    reject(new Error('Reporte no encontrado'));
-                }
-                const report = OPIReport[typeReport]
-
-                const reportItem = report.find(r => r._id.toString() === reportId)
-
-                Object.assign(reportItem, updateData)
-
-                return document.save()
-
+                return document.save()               
 
             }).then(updateDocuemnt => {
+              
                 resolve(updateDocuemnt)
             }).catch(error => {
                 reject(new Error('Error al obtener el reporte' + error.message));
@@ -182,35 +302,198 @@ function oneUpdateProductionReport(id, processDataId, productionId, reportId, it
 }
 
 
-function downloadReport(date1, date2) {  
-      
+function downloadReport(date1, date2) {
+
     return new Promise((resolve, reject) => {
         const startDate = new Date(date1);
         const endDate = new Date(date2);
         const formattedStartTime = startDate.toISOString().split('T')[0];
-        const formattedEndTime = endDate.toISOString().split('T')[0];       
+        const formattedEndTime = endDate.toISOString().split('T')[0];
 
-        model.find({            
+        model.find({
             processData: {
                 $elemMatch: {
                     date: {
-                        $gte: formattedStartTime , // Día anterior
+                        $gte: formattedStartTime, // Día anterior
                         $lte: formattedEndTime  // Día actual
                     },
                     // Incluimos el turno si se proporciona
                 }
             }
         })
-        .then(result => {
-            
-            resolve(result);
-        })
-        .catch(error => {
-            reject(new Error('Error al obtener el reporte: ' + error.message));
-        });
+            .then(result => {
+
+                resolve(result);
+            })
+            .catch(error => {
+                reject(new Error('Error al obtener el reporte: ' + error.message));
+            });
     });
 }
 
+function downloadReportOpi(date1, date2) {
+    return new Promise((resolve, reject) => {
+      const startDate = new Date(date1);
+      const endDate = new Date(date2);
+  
+      modelOpi.aggregate([
+        {
+          $project: {
+            equipmentId: 1,
+            equipmentName: 1,
+            location: 1,
+            report: {
+              $map: {
+                input: "$report",
+                as: "rep",
+                in: {
+                  // Se filtra cada categoría según que el campo "date" (convertido a Date)
+                  // esté dentro del rango [startDate, endDate]
+                  IC: {
+                    $filter: {
+                      input: "$$rep.IC",
+                      as: "item",
+                      cond: {
+                        $and: [
+                          {
+                            $gte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              startDate
+                            ]
+                          },
+                          {
+                            $lte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              endDate
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  EC: {
+                    $filter: {
+                      input: "$$rep.EC",
+                      as: "item",
+                      cond: {
+                        $and: [
+                          {
+                            $gte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              startDate
+                            ]
+                          },
+                          {
+                            $lte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              endDate
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  DPA: {
+                    $filter: {
+                      input: "$$rep.DPA",
+                      as: "item",
+                      cond: {
+                        $and: [
+                          {
+                            $gte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              startDate
+                            ]
+                          },
+                          {
+                            $lte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              endDate
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  NST: {
+                    $filter: {
+                      input: "$$rep.NST",
+                      as: "item",
+                      cond: {
+                        $and: [
+                          {
+                            $gte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              startDate
+                            ]
+                          },
+                          {
+                            $lte: [
+                              { 
+                                $dateFromString: { 
+                                  dateString: "$$item.date", 
+                                  format: "%Y-%m-%d" 
+                                } 
+                              },
+                              endDate
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ])
+        .then(result => {
+          resolve(result);
+        })
+        .catch(error => {
+          reject(new Error("Error al obtener el reporte: " + error.message));
+        });
+    });
+  }
+  
+  
+  
 
 
 module.exports = {
@@ -222,5 +505,9 @@ module.exports = {
     updateICReport,
     oneUpdateReport,
     oneUpdateProductionReport,
-    downloadReport
+    downloadReport,
+    downloadReportOpi,
+    ICreport,
+    getOpiReport
+
 }

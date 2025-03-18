@@ -2,260 +2,19 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-
-const reportItemProduction = new Schema({
-    turn:{
-        type: String,
-        required:false
-    },
-    date: {
-        type: String,
-        required: false,
-    },
-    startTime: {
-        type: String,
-        required: false
-    },
-    endTime: {
-        type: String,
-        required: false
-    },
-    totalTime: {
-        type: Number,
-        required: false
-    },
-    volume: {
-        type: Number,
-        required: false
-    }
-})
-
-const reportItemIC = new Schema({
-    turn:{
-        type: String,
-        required:false
-    },
-    date: {
-        type: String,
-        required: false,
-    },
-    startTime: {
+const commonSchema = new Schema({
+    equipmentId: {
         type: String,
         required: true
     },
-    endTime: {
+    equipmentName: {
         type: String,
         required: true
     },
-    totalTime: {
-        type: Number,
-        required: true
-    },
-    system: {
+    location: {
         type: String,
-        required: true
+        required: true,
     },
-    subSystem: {
-        type: String,
-        required: true
-    },
-    component: {
-        type: String,
-        required: true
-    },
-    failureMode: {
-        type: String,
-        required: true
-    },
-    machine: {
-        type: String,
-        required: true
-    },
-    solution: {
-        type: String,
-        required: true
-    }
-})
-
-const reportItemEC = new Schema({
-    turn:{
-        type: String,
-        required:false
-    },
-    date: {
-        type: String,
-        required: false,
-    },
-    startTime: {
-        type: String,
-        required: false
-    },
-    endTime: {
-        type: String,
-        required: false
-    },
-    totalTime: {
-        type: Number,
-        required: false
-    },
-    typeStop: {
-        type: String,
-        required: false
-    },
-    subTypeStop: {
-        type: String,
-        required: false
-    },
-    failureMode: {
-        type: String,
-        required: false
-    },
-    solution: {
-        type: String,
-        required: false
-    }
-})
-
-const reportItemDPA = new Schema({
-    turn:{
-        type: String,
-        required:false
-    },
-    date: {
-        type: String,
-        required: false,
-    },
-    startTime: {
-        type: String,
-        required: false
-    },
-    endTime: {
-        type: String,
-        required: false
-    },
-    totalTime: {
-        type: Number,
-        required: false
-    },    
-    typeStop: {
-        type: String,
-        required: false
-    },
-    subTypeStop: {
-        type: String,
-        required: false
-    },
-    specification: {
-        type: String,
-        required: false
-    },
-    solution: {
-        type: String,
-        required: false
-    }
-
-
-})
-const reportItemNST = new Schema({
-    turn:{
-        type: String,
-        required:false
-    },
-    date: {
-        type: String,
-        required: false,
-    },
-    startTime: {
-        type: String,
-        required: false
-    },
-    endTime: {
-        type: String,
-        required: false
-    },
-    totalTime: {
-        type: Number,
-        required: false
-    },
-    typeStop: {
-        type: String,
-        required: false
-    },
-    subTypeStop: {
-        type: String,
-        required: false
-    },   
-    solution: {
-        type: String,
-        required: false
-    }
-
-})
-
-const reportOpiItem = new Schema({
-    productionReportItem: {
-        type: [reportItemProduction],
-        required: true
-    },
-
-})
-
-
-
-const reportOPiSchmema = new Schema({
-    IC: {
-        type: [reportItemIC],
-        required: false
-    },
-    EC: {
-        type: [reportItemEC],
-        required: false
-    },
-    DPA: {
-        type: [reportItemDPA],
-        required: false
-    },
-    NST: {
-        type: [reportItemNST],
-        required: false
-    }
-
-})
-
-const productionSchema = new Schema({
-    brand: {
-        type: String,
-        required: false
-    },
-    brewId: {
-        type: Number,
-        reqired: false,
-    },
-    volume: {
-        type: Number,
-        required: false
-    },
-    release: {
-        type: Boolean,
-        required: false
-    },
-    startTime: {
-        type: String,
-        required: false
-
-    },
-    endTime: {
-        type: String,
-        required: false
-    },
-    report: {
-        type: [reportOpiItem],
-        required: true
-    }
-
-})
-
-const processDataSchema = new Schema({
     date: {
         type: String,
         required: false,
@@ -264,24 +23,26 @@ const processDataSchema = new Schema({
         type: String,
         required: true
     },
-    release: {
-        type: Boolean,
-        required: true
-    },
-    production: {
-        type: [productionSchema],
+    startTime: {
+        type: String,
         required: false
 
     },
-    OPI: {
-        type: [reportOPiSchmema],
-        required: true
-    }
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+
 
 
 })
 
-const processSchema = new Schema({
+
+const ICSchema = new Schema({
 
     equipmentId: {
         type: String,
@@ -295,8 +56,57 @@ const processSchema = new Schema({
         type: String,
         required: true,
     },
-    processData: {
-        type: [processDataSchema],
+    date: {
+        type: String,
+        required: false,
+    },
+    turn: {
+        type: String,
+        required: true
+    },
+    startTime: {
+        type: String,
+        required: false
+
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+    typeReport:{
+        type:String,
+        required:false
+    },
+
+    system: {
+        type: String,
+        required: false
+
+    },
+    subSystem: {
+        type: String,
+        required: false
+    },
+    component: {
+        type: String,
+        required: false
+    },
+    failureMode: {
+        type: String,
+        required: false
+
+    },
+    machine: {
+        type: String,
+        required: false
+
+    },
+    solution: {
+        type: String,
         required: false
 
     }
@@ -304,7 +114,222 @@ const processSchema = new Schema({
 
 
 })
-const model = mongoose.model('productionsDevs', processSchema);
+
+const ECSchema = new Schema({
+    equipmentId: {
+        type: String,
+        required: false
+    },
+    equipmentName: {
+        type: String,
+        required: false
+    },
+    location: {
+        type: String,
+        required: false,
+    },
+    date: {
+        type: String,
+        required: false,
+    },
+    turn: {
+        type: String,
+        required: false
+    },
+    startTime: {
+        type: String,
+        required: false
+
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+    typeReport:{
+        type:String,
+        required:false
+    },
+    typeStop: {
+        type: String,
+        required: false
+
+    },
+    subTypeStop: {
+        type: String,
+        required: false
+
+    },
+    failureMode: {
+        type: String,
+        required: false
+
+    },
+    solution: {
+        type: String,
+        required: false
+
+    }
 
 
-module.exports = model;
+})
+
+const DPASchema = new Schema({
+    equipmentId: {
+        type: String,
+        required: false
+    },
+    equipmentName: {
+        type: String,
+        required: false
+    },
+    location: {
+        type: String,
+        required: false,
+    },
+    date: {
+        type: String,
+        required: false,
+    },
+    turn: {
+        type: String,
+        required: false
+    },
+    startTime: {
+        type: String,
+        required: false
+
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+    typeReport:{
+        type:String,
+        required:false
+    },
+    typeReports: {
+        type: String,
+        required: false
+    },
+    subTypeReport: {
+        type: String,
+        required: false
+    },
+    specification: {
+        type: String,
+        required: false
+    },
+    solution: {
+        type: String,
+        required: false
+
+    }
+})
+
+const NSTSchema = new Schema({
+    equipmentId: {
+        type: String,
+        required: false
+    },
+    equipmentName: {
+        type: String,
+        required: false
+    },
+    location: {
+        type: String,
+        required: false,
+    },
+    date: {
+        type: String,
+        required: false,
+    },
+    turn: {
+        type: String,
+        required: false
+    },
+    startTime: {
+        type: String,
+        required: false
+
+    },
+    endTime: {
+        type: String,
+        required: false
+    },
+    totalTime: {
+        type: Number,
+        required: false
+    },
+    typeReport:{
+        type:String,
+        required:false
+    },
+    typeStop: {
+        type: String,
+        required: false
+    },
+    subTypeStop: {
+        type: String,
+        required: false
+    },
+    solution: {
+        type: String,
+        required: false
+
+    }
+
+})
+
+
+
+const opiSchema = new Schema({
+    equipmentId: {
+        type: String,
+        required: false
+
+    },
+    equipmentName: {
+        type: String,
+        required: false
+
+    },
+    location: {
+        type: String,
+        required: false
+
+    },
+    report: [{
+        IC: {
+            type: [ICSchema],
+            required: false
+        },
+        EC: {
+            type: [ECSchema],
+            required: false
+
+        },
+        DPA: {
+            type: [DPASchema],
+            required: false
+
+        },
+        NST: {
+            type: [NSTSchema],
+            required: false
+
+        }
+
+    }]
+})
+
+const modelOpi = mongoose.model('opiReports', opiSchema)
+
+module.exports = modelOpi

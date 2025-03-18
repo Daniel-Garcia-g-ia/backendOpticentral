@@ -52,12 +52,9 @@ function getOneReport(req, res) {
         jwt.verifyToken(token)
             .then((decoded) => {
                 const equipmentId = req.params.equipmentId
-                const date = req.params.date
-                const turn = req.params.turn
-
-
-
-                storage.getOne(equipmentId, date, turn)
+                const date = req.params.date  
+                
+                storage.getOne(equipmentId, date)
                     .then((result) => {
                         const data = {
                             auth: true,
@@ -136,37 +133,120 @@ function getMostRecentReport(req, res) {
         jwt.verifyToken(token)
             .then((decoded) => {
                 const equipmentId = req.params.equipmentId
-
                 storage.getMostRecentReport(equipmentId)
                     .then((result) => {
-
                         if (result === 0) {
                             const data = {
                                 auth: true,
                                 data: null
-
                             }
                             resolve(data)
-
                         } else {
                             const data = {
                                 auth: true,
                                 data: result
-
                             }
                             resolve(data)
-
                         }
+                    })
+            }).catch((err) => {
+                reject({ status: 401, message: 'Error al autenticar token', authDenied })
+            })
+    })
+}
 
+function opiGetReport(req, res) {
+    const token = req.headers['x-access-token']
+    const authDenied = {
+        auth: false,
+    }
 
-
-
+    return new Promise((resolve, reject) => {
+        jwt.verifyToken(token)
+            .then((decoded) => {
+                const equipmentId = req.params.equipmentId
+                const date = req.params.date
+                const turn = req.params.turn
+                console.log(date, turn, equipmentId)
+                storage.getOpiReport(equipmentId, date, turn)
+                    .then((result) => {
+                        if (result === 0) {
+                            const data = {
+                                auth: true,
+                                data: null
+                            }
+                            resolve(data)
+                        } else {
+                            const data = {
+                                auth: true,
+                                data: result
+                            }
+                            resolve(data)
+                        }
                     })
 
             }).catch((err) => {
                 reject({ status: 401, message: 'Error al autenticar token', authDenied })
             })
+    })
+}
 
+
+
+
+function opireport(req, res) {
+
+    const token = req.headers['x-access-token']
+    const { id } = req.params;
+    const { typeReport } = req.body
+
+    const authDenied = {
+        auth: false,
+    }
+
+    return new Promise((resolve, reject) => {
+        jwt.verifyToken(token)
+            .then((decoded) => {
+                if (typeReport === 'IC') {
+                    const { startTime, endTime, totalTime,typeReport, system, subSystem,
+                        component, failureMode, equipmentName, solution, date, turn, equipmentId, location, } = req.body
+                    storage.ICreport({ startTime, endTime, totalTime, typeReport, system, subSystem, component, failureMode, equipmentName, solution, date, turn, equipmentId, location }, typeReport)
+                } else if (typeReport === 'EC') {
+                    const { equipmentId, equipmentName, location, date, turn,
+                        startTime, endTime, totalTime,typeReport, typeStop, subTypeStop, failureMode, solution
+                    } = req.body
+                    /* storage.ICreport({},typeReport) */
+                    storage.ICreport({
+                        equipmentId, equipmentName, location, date, turn,
+                        startTime, endTime, totalTime,typeReport, typeStop, subTypeStop, failureMode, solution
+                    }, typeReport)
+                } else if (typeReport === 'DPA') {
+                    const { equipmentId, equipmentName, location, date, turn,
+                        startTime, endTime, totalTime,typeReport,typeReports, subTypeReport, specification, solution
+                    } = req.body
+                    storage.ICreport({
+                        equipmentId, equipmentName, location, date, turn,
+                        startTime, endTime, totalTime,typeReport, typeReports, subTypeReport, specification, solution
+                    }, typeReport)
+                } else if (typeReport === 'NST') {
+                    const { equipmentId, equipmentName, location, date, turn,
+                        startTime, endTime, totalTime, typeReport,typeStop, subTypeStop, solution
+                    } = req.body
+                    storage.ICreport({
+                        equipmentId, equipmentName, location, date, turn,
+                        startTime, endTime, totalTime,typeReport, typeStop, subTypeStop, solution
+                    }, typeReport)
+                }
+            }).then(result => {
+                const data = {
+                    auth: true,
+                    updateData: result
+                }
+                resolve(data);
+            }).catch((err) => {
+
+                reject({ status: 402, message: 'Error al solicitar información', authDenied });
+            });
 
     })
 
@@ -299,10 +379,12 @@ function updateOneReport(req, res) {
     const { id } = req.params;
     const { typeReport, processDataId, OPI_id, reportId, updateData } = req.body
     const { productionId, itemReportId } = req.body
+    
 
     const authDenied = {
         auth: false,
     }
+ 
     return new Promise((resolve, reject) => {
         jwt.verifyToken(token)
             .then((decoded) => {
@@ -371,35 +453,72 @@ function downloadreport(req, res) {
                             auth: true,
                             updateData: result
                         }
-                        resolve(data);                    
+                        resolve(data);
 
 
-                        }).catch((err) => {
-
-                            reject({ status: 402, message: 'error al solicitar informacion', authDenied })
-
-                        })
                     }).catch((err) => {
 
-                        reject({ status: 401, message: 'error al autenticar token', authDenied })
-                    })
+                        reject({ status: 402, message: 'error al solicitar informacion', authDenied })
 
+                    })
+            }).catch((err) => {
+
+                reject({ status: 401, message: 'error al autenticar token', authDenied })
             })
 
+    })
 
 
+
+}
+function downloadreportOpi(req, res) {
+    const token = req.headers['x-access-token'];
+    const { date1, date2 } = req.body;
+    const authDenied = {
+        auth: false,
     }
+    return new Promise((resolve, reject) => {
+        jwt.verifyToken(token)
+            .then((decoded) => {
+
+                storage.downloadReportOpi(date1, date2)
+                    .then((result) => {
+                        const data = {
+                            auth: true,
+                            updateData: result
+                        }
+                        resolve(data);
+
+
+                    }).catch((err) => {
+
+                        reject({ status: 402, message: 'error al solicitar informacion', authDenied })
+
+                    })
+            }).catch((err) => {
+
+                reject({ status: 401, message: 'error al autenticar token', authDenied })
+            })
+
+    })
+
+
+
+}
 
 module.exports = {
-            getReport,
-            getOneReport,
-            addProduction,
-            getMostRecentReport,
-            updateReportProduction,
-            updateOneReport,
-            downloadreport
+    getReport,
+    getOneReport,
+    addProduction,
+    getMostRecentReport,
+    updateReportProduction,
+    updateOneReport,
+    downloadreport,
+    opireport,
+    opiGetReport,
+    downloadreportOpi
 
-        }
+}
 
 
 
