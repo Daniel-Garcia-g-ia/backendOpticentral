@@ -115,6 +115,38 @@ router.get('/opi-report-consult/:equipmentId/:date/:turn',function(req,res){
     
 
 })
+router.delete('/delete/main-report/:id',function(req,res){
+    controller.deleteReport(req,res)
+    .then((result) => { 
+                      
+        response.success(req, res, result, 200);
+    })
+    .catch((err) => {
+        response.error(req, res, 'Error al procesar informacion', err.status, err.message, err.authDenied)
+    })
+})
+
+router.delete('/delete/report-production/:id',function(req,res){
+    controller.deleteReportProduction(req,res)
+    .then((result) => { 
+                      
+        response.success(req, res, result, 200);
+    })
+    .catch((err) => {
+        response.error(req, res, 'Error al procesar informacion', err.status, err.message, err.authDenied)
+    })
+})
+
+router.delete('/delete/report-external/:id',function(req,res){
+    controller.deleteReportExternal(req,res)
+    .then((result) => { 
+                      
+        response.success(req, res, result, 200);
+    })
+    .catch((err) => {
+        response.error(req, res, 'Error al procesar informacion', err.status, err.message, err.authDenied)
+    })
+})
 
 
 
