@@ -8,6 +8,18 @@ async function get() {
   return process
 }
 
+async function oldData() {
+  const process = await model.find({}).limit(1000);   // o el número que necesites
+
+  
+  
+
+
+};
+
+
+
+
 
 
 async function getOne(equipmentId, date) {
@@ -600,7 +612,7 @@ function deleteReportExternal(id, typeReport, reportId) {
 
         // Marcar el campo modificado para que Mongoose detecte el cambio
         document.markModified('report');
-        
+
         // Guardar el documento modificado
         return document.save();
       })
@@ -628,6 +640,7 @@ module.exports = {
   getOpiReport,
   deleteReport,
   deleteReportProduction,
-  deleteReportExternal
+  deleteReportExternal,
+  oldData
 
 }

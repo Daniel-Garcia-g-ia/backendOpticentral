@@ -304,7 +304,7 @@ const processSchema = new Schema({
 
 
 })
-const model = mongoose.model('productionsDevs', processSchema);
+const model = mongoose.model('productions', processSchema);
 
 
 module.exports = model;

@@ -617,6 +617,42 @@ function deleteReportExternal(req, res) {
 
 }
 
+function oldData(req, res) {
+    const token = req.headers['x-access-token'];
+    const { id } = req.params;
+    const { typeReport, reportId } = req.body;
+    const authDenied = {
+        auth: false,
+    }
+    
+
+    return new Promise((resolve, reject) => {
+        jwt.verifyToken(token)
+            .then((decoded) => {
+
+                storage.oldData()
+                    .then((result) => {
+                        const data = {
+                            auth: true,
+                            reult: result
+                        }
+                        resolve(data);
+
+
+                    }).catch((err) => {
+
+                        reject({ status: 402, message: 'error al solicitar informacion', authDenied })
+
+                    })
+            }).catch((err) => {
+
+                reject({ status: 401, message: 'error al autenticar token', authDenied })
+            })
+
+    })
+
+}
+
 module.exports = {
     getReport,
     getOneReport,
@@ -630,7 +666,8 @@ module.exports = {
     downloadreportOpi,
     deleteReport,
     deleteReportProduction,
-    deleteReportExternal
+    deleteReportExternal,
+    oldData
 
 }
 

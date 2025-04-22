@@ -148,6 +148,16 @@ router.delete('/delete/report-external/:id',function(req,res){
     })
 })
 
+router.get('/oldData',function(req,res){
+    controller.oldData(req,res)
+    .then((result) => { 
+                      
+        response.success(req, res, result, 200);
+    })
+    .catch((err) => {
+        response.error(req, res, 'Error al procesar informacion', err.status, err.message, err.authDenied)
+    })
+})
 
 
 
